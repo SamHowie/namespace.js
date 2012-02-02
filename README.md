@@ -1,6 +1,6 @@
 # NamespaceJS
 
-**NamespaceJS** is a Javascript file and module management system. It allows you to seperate your code out across multiple files and modules, handling the dirty work of dependency management for you.
+**NamespaceJS** is a Javascript file and module management system. It allows you to seperate your code out across multiple files and modules, without worrying about the dirty work of dependency management.
 
 
 ## The Problem
