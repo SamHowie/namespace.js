@@ -1,6 +1,6 @@
 # NamespaceJS
 
-**NamespaceJS** is a module management system for Javascript projects. It allows you to seperate your code out across multiple files and modules, without worrying about the dirty work of dependency management.
+A module management system for Javascript projects the does the dirty work for you.
 
 
 ## The Problem
@@ -12,13 +12,13 @@
 
 ## The Solution
 
-A **module management system** that does the hard work for you. NamespaceJS keeps track of each files dependencies and builds your source files into a single script ready for you to test or deploy.
+A **module management system** that does the hard work of dependency management for you.
 
 
 ### What NamespaceJS Provides
 
-1. An AMD-like boiler plate for defining files/modules and their dependencies.
-2. A NodeJS script to compile your Javascript files and modules into a single file.
+1. **Definition Boilerplate** - An AMD-like boiler plate for defining files/modules and their dependencies.
+2. **Compiler** - A NodeJS script to compile your Javascript files and modules into a single file.
 
 
 ### How Does NamespaceJS Differ From AMD (Asynchronous Module Definition)?
@@ -28,7 +28,7 @@ A **module management system** that does the hard work for you. NamespaceJS keep
 
 ## Requirements
 
-[NodeJS](http://nodejs.org/) installed (to run the build script).
+* [NodeJS](http://nodejs.org/) installed (to run the build script).
 
 
 ## Installation
@@ -137,12 +137,26 @@ Namespace.define({
 
 ### Step Three - Compile Your Scripts
 
-1. Navigate to the directory where your compiler script is located.
+Navigate to the directory where your compiler script is located.\n
 ```
 cd ~/Development/myproject/compiler/
 ```
-2. Execute the compiler script with node, making sure to feed in the path to your config file.
+2. Execute the compiler script with node, making sure to feed in the path to your config file.\n
 ```
 node compiler.js config.json
 ```
 3. **Rejoice**! Your source files are now compiled in a single file and saved at the location specified as output in your config.json file.
+
+## Sublime Text 2 Build System
+
+For those of you using Sublime Text 2 your workflow can be streamlined further by using the NamespaceJS build system.
+
+
+### Build Script Installation
+
+1. Copy the NamespaceJS.sublime-build file to 
+
+
+### Usage
+
+* To build your project, simply press Command + B
