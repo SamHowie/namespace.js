@@ -137,11 +137,13 @@ Namespace.define({
 
 ### Step Three - Compile Your Scripts
 
-Navigate to the directory where your compiler script is located.\n
+1. Navigate to the directory where your compiler script is located.
+
 ```
 cd ~/Development/myproject/compiler/
 ```
-2. Execute the compiler script with node, making sure to feed in the path to your config file.\n
+2. Execute the compiler script with node, making sure to feed in the path to your config file.
+
 ```
 node compiler.js config.json
 ```
@@ -154,9 +156,9 @@ For those of you using Sublime Text 2 your workflow can be streamlined further b
 
 ### Build Script Installation
 
-1. Copy the NamespaceJS.sublime-build file to 
+1. Copy the NamespaceJS.sublime-build file to.
 
 
 ### Usage
 
-* To build your project, simply press Command + B
+* To build your project, simply press **Command + B**.
