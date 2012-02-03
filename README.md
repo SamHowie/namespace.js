@@ -144,10 +144,15 @@ For those of you using Sublime Text 2 your workflow can be streamlined further b
 
 ### Installation
 
-1. Copy the NamespaceJS.sublime-build file to:
+1. Copy the NamespaceJS.sublime-build file to your user packages directory.
     ~/Library/Application\ Support/Sublime\ Text\ 2/Packages/User/
+2. In your Sublime Project Workspace go to **Tools** > **Build System** and select **NamespaceJS**.
 
 
 ### Usage
 
-* Press **Command + B** to build.
+* In Sublime Text 2 press **Command + B** to build your project.
+
+## Issues?
+
+Feel free to shoot me a message!
