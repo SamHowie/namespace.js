@@ -1,7 +1,5 @@
 # Configuration Options
-The NamespaceJS compiler script has several options that can be set. 
-
-The following options can be set in the config.json file.
+The NamespaceJS compiler script has several options that can be set. All configuration options are stored in the compilers config.json file.
 
 ## Paths
 
@@ -16,7 +14,7 @@ The path to the NamespaceJS script.
 ### output
 
 Where to output the compiled script. Multiple paths may be specified by using ";" as a delimeter.
-```
+```javascript
 "output": "../debug/MyCompiledScript.js;../release/MyCompiledScript.js"
 ```
 
@@ -38,7 +36,7 @@ Sometimes you may want to include files or libraries that have not been implemen
 
 Priorities are added at the top of the compiled script in the order they are defined.
 
-```
+```javascript
 "priorities": [
 	"../lib/jQuery.js",
 	"../lib/SomeOtherLibrary.js"
