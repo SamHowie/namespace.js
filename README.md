@@ -29,7 +29,7 @@ A **module management system** that does the hard work for you. NamespaceJS keep
 
 
 ### How Does NamespaceJS Differ From AMD?
-* Instead of loading many scripts asynchronously after page load, NamespaceJS builds your scripts into a single file that can be loaded with the page.
+* Instead of loading many scripts asynchronously after the page loads, NamespaceJS builds your scripts into a single file that is loaded with the page.
 
 
 ## Requirements
@@ -40,19 +40,14 @@ NodeJS installed on your build machine (to run the build script).
 ## Installation
 
 1. Make a directory where you wish to store the repository.
-
 ```$
 mkdir ~/GitHub
 ```
-
 2. Change into the directory you just made.
-
 ```$
 cd ~/GitHub
 ```
-
 3. Clone the NamespaceJS repository into your directory.
-
 ```$
 git clone git@github.com:SamHowie/Namespace.js.git
 ```
@@ -149,15 +144,11 @@ Namespace.define({
 ### Step Three - Compile Your Scripts
 
 1. Navigate to the directory where your compiler script is located.
-
 ```$
 cd ~/Development/myproject/compiler/
 ```
-
 2. Execute the compiler script with node, making sure to feed in the path to your config file.
-
 ```$
 node compiler.js config.json
 ```
-
 3. Rejoice for your source files have now been compiled into a single file and saved to the location specified as output in your config.json file.
