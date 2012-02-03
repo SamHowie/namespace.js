@@ -1,0 +1,7 @@
+## Hidden OSX Files
+*.DS_Store
+.DS_Store
+
+## Sublime Files
+*.sublime-project
+*.sublime-workspace
