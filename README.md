@@ -28,7 +28,7 @@ A **module management system** that does the hard work of dependency management 
 
 ## Requirements
 
-* [NodeJS](http://nodejs.org/) installed (to run the build script).
+* [NodeJS](http://nodejs.org/) (to run the build script).
 
 
 ## Installation
@@ -81,8 +81,7 @@ Namespace.define({
 
 ```javascript
 Namespace.define({
-	using: ["Farmyard.Cow",
-				"Farmyard.Pig"],
+	using: ["Farmyard.Cow", "Farmyard.Pig"],
 	namespace: "Farmyard",
 	name: "Farm",
 	definition: function (Cow, Pig) {
@@ -144,8 +143,10 @@ For those of you using Sublime Text 2 your workflow can be streamlined further b
 
 ### Installation
 
-1. Copy the NamespaceJS.sublime-build file to your user packages directory.
-    ~/Library/Application\ Support/Sublime\ Text\ 2/Packages/User/
+1. Copy the **NamespaceJS.sublime-build** file to your user packages directory.
+```
+~/Library/Application\ Support/Sublime\ Text\ 2/Packages/User/
+```
 2. In your Sublime Project Workspace go to **Tools** > **Build System** and select **NamespaceJS**.
 
 
