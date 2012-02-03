@@ -12,7 +12,7 @@
 
 ## The Solution
 
-A module **management system** that does the hard work for you. NamespaceJS keeps track of each files dependencies and builds your source files into a single script ready for you to test or deploy.
+A **module management system** that does the hard work for you. NamespaceJS keeps track of each files dependencies and builds your source files into a single script ready for you to test or deploy.
 
 
 ### What NamespaceJS Provides
@@ -31,9 +31,11 @@ A module **management system** that does the hard work for you. NamespaceJS keep
 ### How Does NamespaceJS Differ From AMD?
 * Instead of loading many scripts asynchronously after page load, NamespaceJS builds your scripts into a single file that can be loaded with the page.
 
+
 ## Requirements
 
 NodeJS installed on your build machine (to run the build script).
+
 
 ## Installation
 
@@ -41,9 +43,13 @@ NodeJS installed on your build machine (to run the build script).
 2. cd ~/GitHub
 3. git clone git@github.com:SamHowie/Namespace.js.git
 
+
 ## Usage
 
 ### Step One - Define Your Modules
+
+**file:** myproject/src/Farmyard/Cow.js
+
 ```javascript
 Namespace.define({
 	namespace: "Farmyard",
@@ -56,7 +62,11 @@ Namespace.define({
 		return Cow;
 	}
 });
+```
 
+**file:** myproject/src/Farmyard/Pig.js
+
+```javascript
 Namespace.define({
 	namespace: "Farmyard",
 	name: "Pig",
@@ -68,7 +78,11 @@ Namespace.define({
 		return Pig;
 	}
 });
+```
 
+**file:** myproject/src/Farmyard/Farm.js
+
+```javascript
 Namespace.define({
 	using: ["Farmyard.Cow",
 				"Farmyard.Pig"],
@@ -97,3 +111,37 @@ Namespace.define({
 });
 ```
 
+
+### Step Two - Setup The Configuration File
+
+**file:** myproject/compiler/config.json
+
+```javascript
+{
+	"paths":{
+		"source": "../src",
+		"namespace-module": "../src/Namespace.js",
+		"output": "../debug/Farmyard.js"
+	},
+	"settings":{
+		"ignoreHiddenFiles": true,
+		"uglify": false,
+		"priorities": {}
+	}
+}
+```
+
+
+### Step Three - Compile Your Scripts
+
+1. Navigate to the directory where your compiler script is located.
+```terminal
+cd ~/Development/myproject/compiler/
+```
+
+2. Execute the compiler script with node, making sure to feed in the path to your config file.
+```terminal
+node compiler.js config.json
+```
+
+3. Rejoice for your source files have now been compiled into a single file and saved to the location specified as output in your config.json file.
