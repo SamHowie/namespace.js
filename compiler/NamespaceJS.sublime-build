@@ -1,0 +1,4 @@
+{
+	"working_dir": "$project_path/compiler/",
+	"cmd": ["node", "compiler.js", "$project_path/compiler/config.json"]
+}

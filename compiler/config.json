@@ -1,0 +1,13 @@
+{
+	"paths":{
+		"source": "../src",
+		"namespace.js": "../src/Namespace.js",
+		"output": "../"
+	},
+	"settings":{
+		"ignoreHiddenFiles": true,
+		"uglify": false,
+		"priorities": {
+		}
+	}
+}
