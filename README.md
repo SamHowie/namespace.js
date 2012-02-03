@@ -1,6 +1,6 @@
 # NamespaceJS
 
-**NamespaceJS** is a module management system for Javascript. It allows you to seperate your code out across multiple files and modules, without worrying about the dirty work of dependency management.
+**NamespaceJS** is a module management system for Javascript projects. It allows you to seperate your code out across multiple files and modules, without worrying about the dirty work of dependency management.
 
 
 ## The Problem
@@ -39,9 +39,23 @@ NodeJS installed on your build machine (to run the build script).
 
 ## Installation
 
-1. mkdir ~/GitHub
-2. cd ~/GitHub
-3. git clone git@github.com:SamHowie/Namespace.js.git
+1. Make a directory where you wish to store the repository.
+
+```$
+mkdir ~/GitHub
+```
+
+2. Change into the directory you just made.
+
+```$
+cd ~/GitHub
+```
+
+3. Clone the NamespaceJS repository into your directory.
+
+```$
+git clone git@github.com:SamHowie/Namespace.js.git
+```
 
 
 ## Usage
@@ -135,12 +149,14 @@ Namespace.define({
 ### Step Three - Compile Your Scripts
 
 1. Navigate to the directory where your compiler script is located.
-```terminal
+
+```$
 cd ~/Development/myproject/compiler/
 ```
 
 2. Execute the compiler script with node, making sure to feed in the path to your config file.
-```terminal
+
+```$
 node compiler.js config.json
 ```
 
