@@ -15,7 +15,9 @@ The path to the NamespaceJS script.
 
 Where to output the compiled script. Multiple paths may be specified by using ";" as a delimeter.
 ```javascript
+
 "output": "../debug/MyCompiledScript.js;../release/MyCompiledScript.js"
+
 ```
 
 ## Settings
