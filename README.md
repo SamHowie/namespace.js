@@ -17,38 +17,32 @@ A **module management system** that does the hard work for you. NamespaceJS keep
 
 ### What NamespaceJS Provides
 
-1. A boiler plate for defining files/modules and their dependencies.
+1. An AMD-like boiler plate for defining files/modules and their dependencies.
 2. A NodeJS script to compile your Javascript files and modules into a single file.
 
 
-### Why Not Use AMD (Asynchronous Module Definition)?
+### How Does NamespaceJS Differ From AMD (Asynchronous Module Definition)?
 
-* AMD requires each Javascript module/file to be loaded individually. This inflates the number of HTTPRequests being made and ultimately slows the load time of your page.
-* AMD's asynchronous loading adds an unnecessary second phase of script loading once the document is loaded. This delays the responsiveness of your Javascript and end user experience.
-* Script loading can be considered dangerous as it relies on browser detection. This reliance means that these libraries may break as new browser versions are released.
-
-
-### How Does NamespaceJS Differ From AMD?
-* Instead of loading many scripts asynchronously after the page loads, NamespaceJS builds your scripts into a single file that is loaded with the page.
+* **NamespaceJS is not a script loader** - Instead of loading scripts as modules are required, NamespaceJS builds (and optionally minifies) all your scripts into a single file that is loaded with the page.
 
 
 ## Requirements
 
-NodeJS installed on your build machine (to run the build script).
+[NodeJS](http://nodejs.org/) installed (to run the build script).
 
 
 ## Installation
 
 1. Make a directory where you wish to store the repository.
-```$
+```
 mkdir ~/GitHub
 ```
 2. Change into the directory you just made.
-```$
+```
 cd ~/GitHub
 ```
 3. Clone the NamespaceJS repository into your directory.
-```$
+```
 git clone git@github.com:SamHowie/Namespace.js.git
 ```
 
@@ -144,11 +138,11 @@ Namespace.define({
 ### Step Three - Compile Your Scripts
 
 1. Navigate to the directory where your compiler script is located.
-```$
+```
 cd ~/Development/myproject/compiler/
 ```
 2. Execute the compiler script with node, making sure to feed in the path to your config file.
-```$
+```
 node compiler.js config.json
 ```
-3. Rejoice for your source files have now been compiled into a single file and saved to the location specified as output in your config.json file.
+3. **Rejoice**! Your source files are now compiled in a single file and saved at the location specified as output in your config.json file.
