@@ -34,17 +34,11 @@ A **module management system** that does the hard work of dependency management 
 ## Installation
 
 1. Make a directory where you wish to store the repository.
-```
-mkdir ~/GitHub
-```
+    mkdir ~/GitHub
 2. Change into the directory you just made.
-```
-cd ~/GitHub
-```
+    cd ~/GitHub
 3. Clone the NamespaceJS repository into your directory.
-```
-git clone git@github.com:SamHowie/Namespace.js.git
-```
+    git clone git@github.com:SamHowie/Namespace.js.git
 
 
 ## Usage
@@ -138,27 +132,22 @@ Namespace.define({
 ### Step Three - Compile Your Scripts
 
 1. Navigate to the directory where your compiler script is located.
-
-```
-cd ~/Development/myproject/compiler/
-```
+    cd ~/Development/myproject/compiler/
 2. Execute the compiler script with node, making sure to feed in the path to your config file.
-
-```
-node compiler.js config.json
-```
-3. **Rejoice**! Your source files are now compiled in a single file and saved at the location specified as output in your config.json file.
+    node compiler.js config.json
+3. **Rejoice!** Your source files are now compiled in a single file and saved at the location specified as output in your config.json file.
 
 ## Sublime Text 2 Build System
 
 For those of you using Sublime Text 2 your workflow can be streamlined further by using the NamespaceJS build system.
 
 
-### Build Script Installation
+### Installation
 
-1. Copy the NamespaceJS.sublime-build file to.
+1. Copy the NamespaceJS.sublime-build file to:
+    ~/Library/Application\ Support/Sublime\ Text\ 2/Packages/User/
 
 
 ### Usage
 
-* To build your project, simply press **Command + B**.
+* Press **Command + B** to build.
