@@ -7,7 +7,6 @@
 	"settings":{
 		"ignoreHiddenFiles": true,
 		"uglify": false,
-		"priorities": {
-		}
+		"priorities": []
 	}
 }
