@@ -51,6 +51,8 @@ git clone git@github.com:SamHowie/Namespace.js.git
 
 ### Step One - Define Your Modules
 
+In order to be compiled properly, Javascript files must be saved in your source directory under a folder structure that matches your namespace. For example the script for the module named 'MyModule' at namespace 'Foo.Bar' is found at src/Foo/Bar/MyModule.js.
+
 #### **file:** myproject/src/Farmyard/Cow.js
 ```javascript
 Namespace.define({
