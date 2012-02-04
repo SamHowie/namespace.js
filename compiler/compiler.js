@@ -1,4 +1,4 @@
-(function() {
+(function () {
     var fs                  = require('fs'),
         uglify              = require("./uglify-js"),
         CONFIG_URI          = process.argv[2] || "config.json",
@@ -63,6 +63,8 @@
             // Validate required settings
             result.settings = (result.settings == null) ? {} : result.settings;
             result.settings.ignoreHiddenFiles = (result.settings.ignoreHiddenFiles == null) ? true : result.settings.ignoreHiddenFiles;
+            result.settings.ignored_files = (result.settings.ignored_files == null) ? [] : result.settings.ignored_files;
+            result.settings.hoisted_files = (result.settings.hoisted_files == null) ? [] : result.settings.hoisted_files;
 
             return result;
         },
@@ -81,34 +83,82 @@
 
             for (i = 0; i < length; i++) {
                 path = directoryPath + "/" + dir[i];
-                if (this.isValidPath(dir[i])) {
-                    if (fs.statSync(path).isDirectory()) {
-                        this.describeFilesInDirectory(path);
-                    } else if (this.isJSFile(path)) {
-                        this.describeFile(path);
-                    }
+                if (fs.statSync(path).isDirectory() && this.isValidDirectory(path)) {
+                    this.describeFilesInDirectory(path);
+                } else if (fs.statSync(path).isFile() && this.isValidFile(path)) {
+                    this.describeFile(path);
                 }
             }
         },
 
-        /**
-         * Validates a directory path. 
-         * 
-         * Invalid paths:
-         *      - Any path that begins with "." (if ignoreHiddenFiles is set in config.json).
-         *      
-         * Pre-conditions:  This method assumes that the configuration data has been loaded.
-         * 
-         * @param  {String}  path - directory path
-         * @return {Boolean}
-         */
-        isValidPath: function isValidPath(path) {
-            var configData  = this.configData,
+        isValidDirectory: function isValidDirectory(path) {
+            var target      = path.split("/").pop(),
+                configData  = this.configData,
                 settings    = configData.settings,
                 result      = true;
 
-            result = (settings && settings.ignoreHiddenFiles && path.indexOf(".") === 0) ? false : result;
+            if (settings && settings.ignoreHiddenFiles && target.indexOf(".") === 0) {
+                result = false;
+            }
+
             return result;
+        },
+
+        isValidFile: function isValidFile(path) {
+            var script                  = fs.readFileSync(path, 'utf8'),
+                namespacePattern        = /namespace: \"((\w|\.|\s|\t|\n)+)\"/i,
+                namespaceMatch          = script.match(namespacePattern),
+                namePattern             = /name: \"((\w|\s|\t|\n)+)\"/i,
+                nameMatch               = script.match(namePattern),
+                target                  = path.split("/").pop(),
+                configData              = this.configData,
+                paths                   = configData.paths,
+                settings                = configData.settings,
+                result                  = true;
+
+            if (settings && settings.ignoreHiddenFiles && target.indexOf(".") === 0) {
+                return false;
+            } else if (this.isJSFile(path) === false) {
+                return false;
+            } else if (settings && settings.ignored_files && this.isInArray(settings.ignored_files, path)) {
+                return false;
+            } else if (paths && paths.namespace_module && path === paths.namespace_module) {
+                return false;
+            }
+
+            // Validate namespace
+            if (nameMatch == null) {
+                console.log("Build Warning: The module defined in '" + path + "' did not specify a name. The file will not be included in the build.");
+                return false;
+            }
+            if (namespaceMatch != null && this.sourcePath + "/" + namespaceMatch[1] + "/" + nameMatch[1] + ".js" != path) {
+                console.log("Build Warning: filepath did not match that of its namespace.");
+                return false;
+            }
+
+            return result;
+        },
+
+        isInArray: function isInArray(array, obj) {
+            var result = false,
+                i;
+
+            if (this.toType(array) !== "Array") {
+                return result;
+            }
+
+            for (i = array.length - 1; i >= 0; i--) {
+                if (array[i] === obj) {
+                    result = true;
+                    break;
+                }
+            }
+
+            return result;
+        },
+
+        toType: function toType(obj) {
+            return (obj == null) ? "null" : Object.prototype.toString.call(obj).slice(8, -1);
         },
 
         /**
@@ -140,7 +190,7 @@
         describeFile: function describeFile(filePath) {
             var script                  = fs.readFileSync(filePath, 'utf8'),
                 dependencyBlockPattern  = /using: \[(\"(\w|\.|\s|\t|\n|\,|\")+)\]/i,
-                match                   = script.match(dependencyBlockPattern),
+                dependenciesMatch       = script.match(dependencyBlockPattern),
                 fileDescriptions        = this.fileDescriptions,
                 sourcePath              = this.sourcePath,
                 fileDesc,
@@ -156,17 +206,46 @@
             }
             fileDesc = fileDescriptions[filePath];
 
-            if (match) {
-                dependenciesString = match[1];
+            if (dependenciesMatch) {
+                dependenciesString = dependenciesMatch[1];
                 dependenciesString = dependenciesString.replace(/(\n|\t|\s|\"|\')/g, "");
                 dependenciesString = dependenciesString.replace(/(\.)/g, "/");
 
                 dependencies = dependenciesString.split(",");
                 for (i = dependencies.length - 1; i >= 0; i--) {
                     dependency = dependencies[i] + ".js";
-                    fileDesc.dependencies.push(dependency);
+                    if (this.isValidDependency(dependency)) {
+                        fileDesc.dependencies.push(dependency);
+                    } else {
+                        console.log("Build Warning: The file " + sourcePath + "/" + filePath + "' had a dependency on an invalid module '" + sourcePath + "/" + dependency + "'.");
+                    }
                 }
             }
+        },
+
+        isValidDependency: function isValidDependency(path) {
+            var result      = true,
+                sourcePath  = this.sourcePath;
+
+            path = sourcePath + "/" + path;
+
+            result = this.fileExists(path);
+
+            return result;
+        },
+
+        fileExists: function fileExists(path) {
+            var result = true;
+
+            try {
+                if (fs.statSync(path).isFile() === false) {
+                    result = false;
+                }
+            } catch (er) {
+                result = false;
+            }
+
+            return result;
         },
 
         /**
@@ -219,9 +298,14 @@
          * @return {void}
          */
         compileScripts: function compileScripts() {
-            var fileDescriptions    = this.fileDescriptions,
+            var configData          = this.configData,
+                fileDescriptions    = this.fileDescriptions,
                 compiledScript      = this.compiledScript,
                 descriptions        = [],
+                settings            = (configData != null) ? configData.settings : null,
+                hoisted_files       = (settings != null) ? settings.hoisted_files : null,
+                paths               = (configData != null) ? configData.paths : null,
+                namespace_module    = (paths != null) ? paths.namespace_module : null,
                 k,
                 i,
                 length;
@@ -234,9 +318,26 @@
 
             descriptions.sort(this.sortScript);
 
+            // Add strict mode
             compiledScript = "\"use strict\";\n";
-            length = descriptions.length;
-            for (i = 0; i < length; i++) {
+
+
+            // Add the NamespaceJS module
+            if (namespace_module != null && this.fileExists(namespace_module)) {
+                compiledScript += fs.readFileSync(namespace_module, 'utf8') + "\n";
+            }
+
+            // Add hoisted files
+            if (hoisted_files != null && this.toType(hoisted_files) === "Array") {
+                for (i = 0, length = hoisted_files.length; i < length; i++) {
+                    if (this.fileExists(hoisted_files[i])) {
+                        compiledScript += fs.readFileSync(hoisted_files[i], 'utf8') + "\n";
+                    }
+                }
+            }
+
+            // Add scripts
+            for (i = 0, length = descriptions.length; i < length; i++) {
                 compiledScript += descriptions[i].script + "\n";
             }
 

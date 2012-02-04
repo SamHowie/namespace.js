@@ -1,12 +1,13 @@
 {
 	"paths":{
-		"source": "../src",
-		"namespace.js": "../src/Namespace.js",
-		"output": "../"
+		"source": "../src/example/src",
+		"namespace_module": "../src/Namespace.js",
+		"output": "../builds/Farmyard.js"
 	},
 	"settings":{
 		"ignoreHiddenFiles": true,
 		"uglify": false,
-		"priorities": []
+		"hoisted_files": ["../src/example/lib/ExampleLibrary.js"],
+		"ignored_files": ["../src/example/src/IgnoredFile.js"]
 	}
 }

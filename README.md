@@ -54,30 +54,30 @@ git clone git@github.com:SamHowie/Namespace.js.git
 #### **file:** myproject/src/Farmyard/Cow.js
 ```javascript
 Namespace.define({
-	namespace: "Farmyard",
-	name: "Cow",
-	definition: function () {
-		var Cow = function Cow() {};
-		Cow.prototype.speak = function speak(
-			console.log("Moo!");
-		) {};
-		return Cow;
-	}
+    namespace: "Farmyard",
+    name: "Cow",
+    definition: function () {
+        var Cow = function Cow() {};
+        Cow.prototype.speak = function speak() {
+            console.log("Moo!");
+        };
+        return Cow;
+    }
 });
 ```
 
 #### **file:** myproject/src/Farmyard/Pig.js
 ```javascript
 Namespace.define({
-	namespace: "Farmyard",
-	name: "Pig",
-	definition: function () {
-		var Pig = function Pig() {};
-		Pig.prototype.speak = function speak(
-			console.log("Oink!");
-		) {};
-		return Pig;
-	}
+    namespace: "Farmyard",
+    name: "Pig",
+    definition: function () {
+        var Pig = function Pig() {};
+        Pig.prototype.speak = function speak() {
+            console.log("Oink!");
+        };
+        return Pig;
+    }
 });
 ```
 
@@ -118,13 +118,14 @@ Namespace.define({
 {
 	"paths":{
 		"source": "../src",
-		"namespace-module": "../src/Namespace.js",
+		"namespace_module": "../src/Namespace.js",
 		"output": "../debug/Farmyard.js"
 	},
 	"settings":{
 		"ignoreHiddenFiles": true,
 		"uglify": false,
-		"priorities": {}
+		"hoisted_files": [],
+        "ignore_files": []
 	}
 }
 ```
