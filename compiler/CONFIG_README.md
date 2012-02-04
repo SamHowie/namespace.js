@@ -15,9 +15,8 @@ The path to the NamespaceJS script.
 
 Where to output the compiled script. Multiple paths may be specified by using ";" as a delimeter.
 ```javascript
-
+// Example of multiple output paths
 "output": "../debug/MyCompiledScript.js;../release/MyCompiledScript.js"
-
 ```
 
 ## Settings
@@ -39,6 +38,7 @@ Sometimes you may want to include files or libraries that have not been implemen
 Priorities are added at the top of the compiled script in the order they are defined.
 
 ```javascript
+// Example of including some libraries in a compiled project.
 "priorities": [
 	"../lib/jQuery.js",
 	"../lib/SomeOtherLibrary.js"

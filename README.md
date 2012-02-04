@@ -51,6 +51,7 @@ git clone git@github.com:SamHowie/Namespace.js.git
 
 ### Step One - Define Your Modules
 
+#### **file:** myproject/src/Farmyard/Cow.js
 ```javascript
 Namespace.define({
 	namespace: "Farmyard",
@@ -64,8 +65,8 @@ Namespace.define({
 	}
 });
 ```
-#### **file:** myproject/src/Farmyard/Cow.js
 
+#### **file:** myproject/src/Farmyard/Pig.js
 ```javascript
 Namespace.define({
 	namespace: "Farmyard",
@@ -79,8 +80,8 @@ Namespace.define({
 	}
 });
 ```
-#### **file:** myproject/src/Farmyard/Pig.js
 
+#### **file:** myproject/src/Farmyard/Farm.js
 ```javascript
 Namespace.define({
 	using: ["Farmyard.Cow", "Farmyard.Pig"],
@@ -108,13 +109,11 @@ Namespace.define({
 	}
 });
 ```
-#### **file:** myproject/src/Farmyard/Farm.js
 
 
 ### Step Two - Setup The Configuration File
 
-**file:** myproject/compiler/config.json
-
+#### **file:** myproject/compiler/config.json
 ```javascript
 {
 	"paths":{
