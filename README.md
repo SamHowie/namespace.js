@@ -117,15 +117,15 @@ Namespace.define({
 ```javascript
 {
 	"paths":{
-		"source": "../src",
+		"source": "../src/example/src",
 		"namespace_module": "../src/Namespace.js",
-		"output": "../debug/Farmyard.js"
+		"output": "../builds/CompiledFile.js",
+		"hoisted_files": ["../src/example/lib/ExampleLibrary.js"],
+		"ignored_files": ["../src/example/src/IgnoredFile.js"]
 	},
 	"settings":{
 		"ignoreHiddenFiles": true,
-		"uglify": false,
-		"hoisted_files": [],
-        "ignore_files": []
+		"uglify": false
 	}
 }
 ```

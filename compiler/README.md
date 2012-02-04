@@ -20,16 +20,6 @@ Where to output the compiled script. Multiple paths may be specified by using ';
 "output": "../debug/MyCompiledScript.js;../release/MyCompiledScript.js"
 ```
 
-## Settings
-
-### ignoreHiddenFiles
-
-Set true to ignore hidden folders and files from being seen by the compiler.
-
-### uglify
-
-Set true to compress your script with [UglifyJS](https://github.com/mishoo/UglifyJS).
-
 ### hoisted_files
 
 An array of paths to files that are to be hoisted to the top of the compiled script.
@@ -57,3 +47,13 @@ An array of paths to files that are to be ignored. Ignored files will not be com
 	"../src/ugly.js"
 ]
 ```
+
+## Settings
+
+### ignoreHiddenFiles
+
+Set true to ignore hidden folders and files from being seen by the compiler.
+
+### uglify
+
+Set true to compress your script with [UglifyJS](https://github.com/mishoo/UglifyJS).

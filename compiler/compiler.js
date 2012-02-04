@@ -63,8 +63,6 @@
             // Validate required settings
             result.settings = (result.settings == null) ? {} : result.settings;
             result.settings.ignoreHiddenFiles = (result.settings.ignoreHiddenFiles == null) ? true : result.settings.ignoreHiddenFiles;
-            result.settings.ignored_files = (result.settings.ignored_files == null) ? [] : result.settings.ignored_files;
-            result.settings.hoisted_files = (result.settings.hoisted_files == null) ? [] : result.settings.hoisted_files;
 
             return result;
         },
@@ -120,7 +118,7 @@
                 return false;
             } else if (this.isJSFile(path) === false) {
                 return false;
-            } else if (settings && settings.ignored_files && this.isInArray(settings.ignored_files, path)) {
+            } else if (paths && paths.ignored_files && this.isInArray(paths.ignored_files, path)) {
                 return false;
             } else if (paths && paths.namespace_module && path === paths.namespace_module) {
                 return false;
@@ -282,9 +280,6 @@
             if (fileDescription != null) {
                 dependencies = fileDescription.dependencies;
                 fileDescription.usedByCount += 1;
-                if (configData.settings.priorities && configData.settings.priorities[filePath]) {
-                    fileDescription.usedByCount = configData.settings.priorities[filePath];
-                }
                 for (i = dependencies.length - 1; i > -1; i--) {
                     dependency = dependencies[i];
                     this.tallyFileDependencies(dependency, fileDescriptions[dependency]);
@@ -302,10 +297,9 @@
                 fileDescriptions    = this.fileDescriptions,
                 compiledScript      = this.compiledScript,
                 descriptions        = [],
-                settings            = (configData != null) ? configData.settings : null,
-                hoisted_files       = (settings != null) ? settings.hoisted_files : null,
                 paths               = (configData != null) ? configData.paths : null,
                 namespace_module    = (paths != null) ? paths.namespace_module : null,
+                hoisted_files       = (paths != null) ? paths.hoisted_files : null,
                 k,
                 i,
                 length;
