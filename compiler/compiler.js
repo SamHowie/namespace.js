@@ -112,7 +112,8 @@
                 configData              = this.configData,
                 paths                   = configData.paths,
                 settings                = configData.settings,
-                result                  = true;
+                result                  = true,
+                matchedPath;
 
             if (settings && settings.ignoreHiddenFiles && target.indexOf(".") === 0) {
                 return false;
@@ -122,6 +123,8 @@
                 return false;
             } else if (paths && paths.namespace_module && path === paths.namespace_module) {
                 return false;
+            } else if (paths && paths.hoisted_files && this.isInArray(paths.hoisted_files, path)) {
+                return false;
             }
 
             // Validate namespace
@@ -129,8 +132,11 @@
                 console.log("Build Warning: The module defined in '" + path + "' did not specify a name. The file will not be included in the build.");
                 return false;
             }
-            if (namespaceMatch != null && this.sourcePath + "/" + namespaceMatch[1] + "/" + nameMatch[1] + ".js" != path) {
-                console.log("Build Warning: filepath did not match that of its namespace.");
+
+            namespaceMatch = (namespaceMatch != null) ? namespaceMatch[1].replace(/(\.)/g, "/") + "/" : "";
+            matchedPath =  this.sourcePath + "/" + namespaceMatch + nameMatch[1] + ".js";
+            if (matchedPath != path) {
+                console.log("Build Warning: filepath '" + path + "' did not match that of its namespace '" + matchedPath + "'.");
                 return false;
             }
 

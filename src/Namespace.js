@@ -10,7 +10,7 @@
     Namespace.isNamespace = true;
 
     // Public Methods
-    Namespace.namespace = function namespace(path) {
+    Namespace.create = function create(path) {
         var currentScope            = context,
             isPathingToNamespace    = true,
             splitNamespace,
@@ -19,12 +19,17 @@
             name,
             type;
 
-        if (toType(path) !== "String") {
-            //throw "Namespace::namespace(path): Expecting parameter \"path\" to be of type String, instead saw " + toType(path) + ".";
-            if (console && console.warn) {
-                console.warn("Namespace::namespace(path): the path '" + path + "'' could not be found so this module is being defined in the global scope.");
+        type = toType(path);
+        if (type !== "String") {
+            if (type === "undefined" || type == "null") {
+                if (console && console.warn) {
+                    console.log(path);
+                    console.warn("Namespace::create(path): the path '" + path + "'' could not be found so this module is being defined in the global scope.");
+                }
+                return context;
+            } else {
+                throw "Namespace::create(path): Expecting parameter \"path\" to be of type String/undefined/null, instead saw " + type + ". Namespace failed to be created.";
             }
-            return context;
         }
 
         splitNamespace  = path.split(".");
@@ -44,7 +49,7 @@
                     isPathingToNamespace = false;
                 }
                 if (!isPathingToNamespace) {
-                    throw "Namespace::namespace(path): Namespaces may only path to namespace container objects, modules, and classes. Did you try to path to/through a module or class member? Namespace not created/returned.";
+                    throw "Namespace::create(path): Namespaces may only path to namespace container objects, modules, and classes. Did you try to path to/through a module or class member? Namespace not created/returned.";
                 }
             }
             currentScope = currentScope[name];
@@ -52,7 +57,7 @@
         return currentScope;
     };
 
-    Namespace.using = function using(path) {
+    Namespace.get = function get(path) {
         var target          = context,
             name            = "",
             splitNamespace,
@@ -62,8 +67,10 @@
             result,
             k;
 
+        //console.log(path);
+
         if (toType(path) !== "String") {
-            throw "Namespace::using(path): Expecting parameter \"path\" to be of type String";
+            throw "Namespace::get(path): Expecting parameter \"path\" to be of type String.";
         }
 
         splitNamespace  = path.split(".");
@@ -74,18 +81,20 @@
             newTargetClass = toType(target[name]);
             if ((newTargetClass === "undefined" || newTargetClass === "null") && name !== "*") {
                 if (console && console.warn) {
-                    console.warn("Namespace::using(path): Namespace '" + path + "' does not exist.");
+                    console.warn("Namespace::get(path): Namespace '" + path + "' does not exist. Returning null.");
                 }
                 return null;
             } else if (name === "*" && i < length - 1) {
                 if (console && console.logWarning) {
-                    console.logWarning("Namespace::using(path): Namespace '" + path + "' does not exist.");
+                    console.logWarning("Namespace::get(path): Namespace '" + path + "' does not exist. Returning null.");
                 }
                 return null;
             } else if (((newTargetClass === "Object" && !target[name].isNamespace) || newTargetClass === "Function") && i !== length - 1) {
-                throw "Namespace::using(path): Can not import a member of a module, class, or singleton.";
+                throw "Namespace::get(path): Can not import a member of a module, class, or singleton.";
+                //return null;
             } else if (newTargetClass === "Object" && target[name].isNamespace && i === length - 1) {
-                throw "Namespace::using(path): Can not import a namespace container object. To import all modules/classes/singletons in a namespace please use using(\"my.name.space.*\", context)";
+                throw "Namespace::get(path): Can not import a namespace container object. To import all modules/classes/singletons in a namespace please use get(\"my.name.space.*\", context)";
+                //return null;
             }
             if (name !== "*") {
                 target = target[name];
@@ -137,19 +146,25 @@
         if (using && toType(using) === "Array") {
             usingLength = using.length;
             for (i = 0; i < usingLength; i++) {
-                using[i] = Namespace.using(using[i]);
+                using[i] = Namespace.get(using[i]);
             }
         } else {
             using = [];
         }
 
-        Namespace.namespace(namespace)[name] = definition.apply(this, using);
+        if (!!definition.apply) {
+            Namespace.create(namespace)[name] = definition.apply(context, using);
+        } else {
+            if (!!console && !!console.warn) {
+                console.warn("Namespace::define(data): Expecting data.definition to be a function.");
+            }
+        }
     };
 
     Namespace.isDefined = function isDefined(namespace) {
         var result          = true,
             names           = namespace.split("."),
-            currentScope    = this,
+            currentScope    = context,
             i,
             length,
             name;
@@ -157,6 +172,7 @@
         for (i = 0, length = names.length; i < length; i++) {
             name = names[i];
             currentScope = currentScope[name];
+            //console.log(currentScope);
             if (currentScope == null) {
                 return false;
             }
