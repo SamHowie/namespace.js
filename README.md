@@ -60,9 +60,8 @@ The script for the module named **MyModule** at namespace **Foo.Bar** is found a
 #### **file:** myproject/src/Farmyard/Cow.js
 ```javascript
 Namespace.define({
-    namespace: "Farmyard",
-    name: "Cow",
-    definition: function () {
+    namespace: "Farmyard.Cow",
+    module: function () {
         var Cow = function Cow() {};
         Cow.prototype.speak = function speak() {
             console.log("Moo!");
@@ -75,9 +74,8 @@ Namespace.define({
 #### **file:** myproject/src/Farmyard/Pig.js
 ```javascript
 Namespace.define({
-    namespace: "Farmyard",
-    name: "Pig",
-    definition: function () {
+    namespace: "Farmyard.Pig",
+    module: function () {
         var Pig = function Pig() {};
         Pig.prototype.speak = function speak() {
             console.log("Oink!");
@@ -90,29 +88,28 @@ Namespace.define({
 #### **file:** myproject/src/Farmyard/Farm.js
 ```javascript
 Namespace.define({
-	using: ["Farmyard.Cow", "Farmyard.Pig"],
-	namespace: "Farmyard",
-	name: "Farm",
-	definition: function (Cow, Pig) {
-		var Farm = function Farm() {
-			this.animals = [];
-			this.animals.push(new Cow());
-			this.animals.push(new Pig());
-		};
+    using: ["Farmyard.Cow", "Farmyard.Pig"],
+    namespace: "Farmyard.Farm",
+    module: function (Cow, Pig) {
+        var Farm = function Farm() {
+            this.animals = [];
+            this.animals.push(new Cow());
+            this.animals.push(new Pig());
+        };
 
-		Farm.prototype.stir = function stir() {
-			var animals = this.animals,
-				animal,
-				i,
-				length;
-			for (i = 0, length = animals.length; i < length; i++) {
-				animal = animals[i];
-				animal.speak();
-			};
-		};
-		
-		return Farm;
-	}
+        Farm.prototype.stir = function stir() {
+            var animals = this.animals,
+                animal,
+                i,
+                length;
+            for (i = 0, length = animals.length; i < length; i++) {
+                animal = animals[i];
+                animal.speak();
+            };
+        };
+
+        return Farm;
+    }
 });
 ```
 
@@ -125,13 +122,16 @@ Namespace.define({
 	"paths":{
 		"source": "../src/example/src",
 		"namespace_module": "../src/Namespace.js",
-		"output": "../builds/CompiledFile.js",
+		"output": "../builds/Farmyard.js",
 		"hoisted_files": ["../src/example/lib/ExampleLibrary.js"],
-		"ignored_files": ["../src/example/src/IgnoredFile.js"]
+		"ignored_files": ["../src/example/src/IgnoredFile.js"],
+		"coffeescript_source": "../src/coffeescript/",
+		"coffeescript_output": "../src/"
 	},
 	"settings":{
 		"ignoreHiddenFiles": true,
-		"uglify": false
+		"uglify": false,
+		"compile_coffeescript": true
 	}
 }
 ```

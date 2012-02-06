@@ -4,10 +4,13 @@
 		"namespace_module": "../src/Namespace.js",
 		"output": "../builds/Farmyard.js",
 		"hoisted_files": ["../src/example/lib/ExampleLibrary.js"],
-		"ignored_files": ["../src/example/src/IgnoredFile.js"]
+		"ignored_files": ["../src/example/src/IgnoredFile.js"],
+		"coffeescript_source": "../src/coffeescript/",
+		"coffeescript_output": "../src/"
 	},
 	"settings":{
 		"ignoreHiddenFiles": true,
-		"uglify": false
+		"uglify": false,
+		"compile_coffeescript": true
 	}
 }

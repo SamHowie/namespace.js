@@ -1,185 +1,125 @@
-(function () {
-    // Utilities
-    var toType = function toType(object) {
-            return object === undefined ? "undefined" : object === null ? "null" : Object.prototype.toString.call(object).slice(8, -1);
-        },
-        context     = this,
-        Namespace   = {};
+(function() {
+  var Namespace, root;
 
-    // Public Properties
-    Namespace.isNamespace = true;
+  root = typeof exports !== "undefined" && exports !== null ? exports : this;
 
-    // Public Methods
-    Namespace.create = function create(path) {
-        var currentScope            = context,
-            isPathingToNamespace    = true,
-            splitNamespace,
-            length,
-            i,
-            name,
-            type;
+  Namespace = (function() {
 
-        type = toType(path);
-        if (type !== "String") {
-            if (type === "undefined" || type == "null") {
-                if (console && console.warn) {
-                    console.log(path);
-                    console.warn("Namespace::create(path): the path '" + path + "'' could not be found so this module is being defined in the global scope.");
-                }
-                return context;
-            } else {
-                throw "Namespace::create(path): Expecting parameter \"path\" to be of type String/undefined/null, instead saw " + type + ". Namespace failed to be created.";
-            }
+    function Namespace() {}
+
+    Namespace.prototype.define = function(module) {
+      var definition, dependencies, namespace;
+      dependencies = module.using;
+      namespace = module.namespace;
+      definition = module.module;
+      if (namespace === void 0) {
+        if (!!console && !!console.warn) {
+          console.warn("Namespace.define(module): Expected module to have property 'namespace'. Module failed to be added to namespace.");
         }
-
-        splitNamespace  = path.split(".");
-        length          = splitNamespace.length;
-
-        for (i = 0; i < length; i++) {
-            name = splitNamespace[i];
-            if (currentScope[name] === undefined || currentScope[name] === null) {
-                currentScope[name] = {isNamespace: true};
-            } else {
-                type = toType(currentScope[name]);
-                if (type === "Object" && (currentScope[name].isNamespace !== true && i !== length - 1)) {
-                    isPathingToNamespace = false;
-                } else if (type === "Function" && i !== length - 1) {
-                    isPathingToNamespace = false;
-                } else if (type !== "Object" && type !== "Function") {
-                    isPathingToNamespace = false;
-                }
-                if (!isPathingToNamespace) {
-                    throw "Namespace::create(path): Namespaces may only path to namespace container objects, modules, and classes. Did you try to path to/through a module or class member? Namespace not created/returned.";
-                }
-            }
-            currentScope = currentScope[name];
+        return this;
+      }
+      if (dependencies === void 0) {
+        dependencies = [];
+      } else {
+        dependencies = this._getDependencies(dependencies);
+      }
+      if ((this.toType(definition)) === !"Function") {
+        if (!!console && !!console.warn) {
+          console.warn("Namespace.define(module): Expected module '" + namespace + "'s definition to be a function.Module failed to be added to namespace.");
         }
-        return currentScope;
+        return this;
+      }
+      this.insert(namespace, definition.apply(root, dependencies));
+      return this;
     };
 
-    Namespace.get = function get(path) {
-        var target          = context,
-            name            = "",
-            splitNamespace,
-            length,
-            i,
-            newTargetClass,
-            result,
-            k;
-
-        //console.log(path);
-
-        if (toType(path) !== "String") {
-            throw "Namespace::get(path): Expecting parameter \"path\" to be of type String.";
+    Namespace.prototype.insert = function(namespace, module) {
+      var context, moduleName, name, names, _i, _len;
+      if ((this.toType(namespace)) === !"String") {
+        if (!!console && !!console.warn) {
+          console.error("Namespace.insert(namespace, module): Expecting 'namespace' parameter to be of type String. Instead saw type " + (this.toType(namespace)) + ". Module failed to be inserted.");
         }
-
-        splitNamespace  = path.split(".");
-        length          = splitNamespace.length;
-
-        for (i = 0; i < length; i++) {
-            name = splitNamespace[i];
-            newTargetClass = toType(target[name]);
-            if ((newTargetClass === "undefined" || newTargetClass === "null") && name !== "*") {
-                if (console && console.warn) {
-                    console.warn("Namespace::get(path): Namespace '" + path + "' does not exist. Returning null.");
-                }
-                return null;
-            } else if (name === "*" && i < length - 1) {
-                if (console && console.logWarning) {
-                    console.logWarning("Namespace::get(path): Namespace '" + path + "' does not exist. Returning null.");
-                }
-                return null;
-            } else if (((newTargetClass === "Object" && !target[name].isNamespace) || newTargetClass === "Function") && i !== length - 1) {
-                throw "Namespace::get(path): Can not import a member of a module, class, or singleton.";
-                //return null;
-            } else if (newTargetClass === "Object" && target[name].isNamespace && i === length - 1) {
-                throw "Namespace::get(path): Can not import a namespace container object. To import all modules/classes/singletons in a namespace please use get(\"my.name.space.*\", context)";
-                //return null;
-            }
-            if (name !== "*") {
-                target = target[name];
-            }
+        return this;
+      }
+      context = root;
+      names = namespace.split(".");
+      moduleName = names.pop();
+      for (_i = 0, _len = names.length; _i < _len; _i++) {
+        name = names[_i];
+        if (context[name] === void 0) {
+          context[name] = {
+            isNamespaceNode: true
+          };
         }
-        if (name !== "*") {
-            //importing a single module/class/singleton.
-            return target;
-        } else {
-            //importing all modules/classes/singletons in a given namespace.
-            result = {};
-            k = 0;
-            for (k in target) {
-                if (target.hasOwnProperty(k) && k !== "isNamespace" && k !== "__proto__") {
-                    result[k] = target[k];
-                }
-            }
-            return result;
+        context = context[name];
+        if (context === !root && context.isNamespaceNode === void 0) {
+          if (!!console && !!console.warn) {
+            console.error("Namespace.insert(namespace, module): Attempting to insert module with path '" + namespace + "' through module with name '" + name + "'. Module failed to be inserted.");
+          }
+          return this;
         }
+      }
+      if (context[moduleName] !== void 0) {
+        if (!!console && !!console.warn) {
+          console.error("Namespace.insert(namespace, module): Attempting to insert module with path '" + namespace + "' where a module already exists. Module failed to be inserted.");
+        }
+        return this;
+      }
+      context[moduleName] = module;
+      return this;
     };
 
-    Namespace.define = function define(data) {
-        var using,
-            namespace,
-            name,
-            definition,
-            usingLength,
-            i;
-
-        if (toType(data) !== "Object") {
-            throw "Namespace::define(data): Expecting a data object as the data paramter.";
+    Namespace.prototype.get = function(namespace) {
+      var context, name, names, _i, _len;
+      if ((this.toType(namespace)) === !"String") {
+        if (!!console && !!console.warn) {
+          console.error("Namespace.get(namespace): Expecting 'namespace' parameter to be of type String. Instead saw type " + (this.toType(namespace)) + ". Module failed to be retrieved.");
         }
-
-        using       = data.using;
-        namespace   = data.namespace;
-        name        = data.name;
-        definition  = data.definition;
-
-        if (name == null) {
-            throw "Namespace::define(data): Not enough data given to define. Please provide a \"name\", and \"definition\" in your data object.";
-        } else if (definition == null) {
-            throw "Namespace::define(data): Not enough data given to define. Please provide a \"name\", and \"definition\" in your data object.";
-        } else if (toType(name) !== "String") {
-            throw "Namespace::define(data): Expecting data.name to be of type String";
-        } else if (Namespace.isDefined(namespace + "." + name) === true) {
-            throw "Namespace::define(data): Namespace conflict. The module you are defining ('" + namespace + "." + name + "') already exists at given namespace.";
+        return;
+      }
+      context = root;
+      names = namespace.split(".");
+      for (_i = 0, _len = names.length; _i < _len; _i++) {
+        name = names[_i];
+        if (context[name] === void 0) {
+          if (!!console && !!console.warn) {
+            console.error("Namespace.get(namespace): The module with namespace '" + namespace + "' is not defined. Module failed to be retrieved.");
+          }
+          return;
         }
-
-        if (using && toType(using) === "Array") {
-            usingLength = using.length;
-            for (i = 0; i < usingLength; i++) {
-                using[i] = Namespace.get(using[i]);
-            }
-        } else {
-            using = [];
-        }
-
-        if (!!definition.apply) {
-            Namespace.create(namespace)[name] = definition.apply(context, using);
-        } else {
-            if (!!console && !!console.warn) {
-                console.warn("Namespace::define(data): Expecting data.definition to be a function.");
-            }
-        }
+        context = context[name];
+      }
+      return context;
     };
 
-    Namespace.isDefined = function isDefined(namespace) {
-        var result          = true,
-            names           = namespace.split("."),
-            currentScope    = context,
-            i,
-            length,
-            name;
-
-        for (i = 0, length = names.length; i < length; i++) {
-            name = names[i];
-            currentScope = currentScope[name];
-            //console.log(currentScope);
-            if (currentScope == null) {
-                return false;
-            }
+    Namespace.prototype._getDependencies = function(dependencies) {
+      var dependency, _i, _len, _results;
+      if ((this.toType(dependencies)) === !"Array") {
+        if (!!console && !!console.warn) {
+          console.error("Namespace.define(module): Expected module to have property 'namespace'. Module failed to be added to namespace.");
         }
-
-        return result;
+        return;
+      }
+      _results = [];
+      for (_i = 0, _len = dependencies.length; _i < _len; _i++) {
+        dependency = dependencies[_i];
+        _results.push(this.get(dependency));
+      }
+      return _results;
     };
 
-    context.Namespace = Namespace;
+    Namespace.prototype.toType = function(object) {
+      if (object === void 0) {
+        return "undefined";
+      } else {
+        return (Object.prototype.toString.call(object)).slice(8, -1);
+      }
+    };
+
+    return Namespace;
+
+  })();
+
+  root.Namespace = new Namespace;
+
 }).call(this);

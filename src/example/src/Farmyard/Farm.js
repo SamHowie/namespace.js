@@ -1,8 +1,7 @@
 Namespace.define({
     using: ["Farmyard.Cow", "Farmyard.Pig"],
-    namespace: "Farmyard",
-    name: "Farm",
-    definition: function (Cow, Pig) {
+    namespace: "Farmyard.Farm",
+    module: function (Cow, Pig) {
         var Farm = function Farm() {
             this.animals = [];
             this.animals.push(new Cow());

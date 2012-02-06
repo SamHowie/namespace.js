@@ -1,4 +1,8 @@
-(function () {
+var sys = require('sys')
+var exec = require('child_process').exec;
+function puts(error, stdout, stderr) { sys.puts(stdout) }
+
+(function compile () {
     var fs                  = require('fs'),
         uglify              = require("./uglify-js"),
         CONFIG_URI          = process.argv[2] || "config.json",
@@ -10,6 +14,47 @@
         fileDescriptions:   null,
         sourcePath:         null,
         compiledScript:     null,
+
+        start: function start() {
+            var context     = this,
+                configData,
+                settings,
+                paths;
+
+            this.init();
+
+            configData = this.configData;
+            if (configData == null) {
+                throw "Build Failed: No configuration data defined.";
+            }
+
+            settings = configData.settings;
+
+            if (settings == null || !settings.compile_coffeescript) {
+                this.build();
+                return;
+            }
+
+            paths = configData.paths;
+
+            if (paths == null || paths.coffeescript_source == null || paths.coffeescript_output == null) {
+                throw "Build failed: CoffeesScript compile requested but either coffeescript_source or coffeescript_output has not been set in config.json."
+            }
+
+            exec("coffee --compile --output " + paths.coffeescript_output + " " + paths.coffeescript_source, puts);
+            function puts(error, stdout, stderr) {
+                if (error) {
+                   sys.puts(error);
+                    return; 
+                }
+                if (stderr) {
+                    sys.puts(stderr);
+                    return;
+                } 
+                if (stdout) sys.puts(stdout);
+                context.build();
+            }
+        },
 
         /**
          * Initialises Builder properties and loads in config data.
@@ -106,8 +151,6 @@
             var script                  = fs.readFileSync(path, 'utf8'),
                 namespacePattern        = /namespace: \"((\w|\.|\s|\t|\n)+)\"/i,
                 namespaceMatch          = script.match(namespacePattern),
-                namePattern             = /name: \"((\w|\s|\t|\n)+)\"/i,
-                nameMatch               = script.match(namePattern),
                 target                  = path.split("/").pop(),
                 configData              = this.configData,
                 paths                   = configData.paths,
@@ -127,14 +170,8 @@
                 return false;
             }
 
-            // Validate namespace
-            if (nameMatch == null) {
-                console.log("Build Warning: The module defined in '" + path + "' did not specify a name. The file will not be included in the build.");
-                return false;
-            }
-
-            namespaceMatch = (namespaceMatch != null) ? namespaceMatch[1].replace(/(\.)/g, "/") + "/" : "";
-            matchedPath =  this.sourcePath + "/" + namespaceMatch + nameMatch[1] + ".js";
+            namespaceMatch = (namespaceMatch != null) ? namespaceMatch[1].replace(/(\.)/g, "/") : "";
+            matchedPath =  this.sourcePath + "/" + namespaceMatch + ".js";
             if (matchedPath != path) {
                 console.log("Build Warning: filepath '" + path + "' did not match that of its namespace '" + matchedPath + "'.");
                 return false;
@@ -379,5 +416,5 @@
 
     });
 
-    Builder.init().build();
+    Builder.start();
 }());

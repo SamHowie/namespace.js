@@ -48,6 +48,15 @@ An array of paths to files that are to be ignored. Ignored files will not be com
 ]
 ```
 
+### coffeescript_source
+
+The path to a CoffeeScript source directory to be compiled.
+
+### coffeescript_output
+
+The path to output Javascript files compiled from CoffeeScript.
+
+
 ## Settings
 
 ### ignoreHiddenFiles
@@ -57,3 +66,9 @@ Set true to ignore hidden folders and files from being seen by the compiler.
 ### uglify
 
 Set true to compress your script with [UglifyJS](https://github.com/mishoo/UglifyJS).
+
+### compile_coffeescript
+
+Set to true if you want to pre-compile CoffeeScript to Javascript before compiling your modules.
+
+**Note:** If compile_coffeescript is set to true, the path variables 'coffeescript_source' and 'coffeescript_output' must be defined.
