@@ -18,7 +18,7 @@ A **module management system** that does the hard work of dependency management 
 ### What NamespaceJS Provides
 
 1. **Definition Boilerplate** - An AMD-like boiler plate for defining files/modules and their dependencies.
-2. **Compiler** - A NodeJS script to compile your Javascript files and modules into a single file.
+2. **Compiler** - A NodeJS script to compile your Javascript files and modules into a single file (This includes a pre-compilation step for CoffeeScript users to transpile your codebase to Javascript).
 
 
 ### How Does NamespaceJS Differ From AMD (Asynchronous Module Definition)?
@@ -29,6 +29,7 @@ A **module management system** that does the hard work of dependency management 
 ## Requirements
 
 * [NodeJS](http://nodejs.org/) (to run the build script).
+* [CoffeeScript](http://coffeescript.org/) (only required if you need to precompile your CoffeeScript to Javascript before compiling your files/modules).
 
 
 ## Installation
@@ -135,6 +136,7 @@ Namespace.define({
 	}
 }
 ```
+**Note:** Please refer to the compiler folder [README](https://github.com/SamHowie/Namespace.js/blob/master/compiler/README.md) for a breakdown of the configuration options.
 
 
 ### Step Three - Compile Your Scripts
@@ -161,6 +163,8 @@ For those of you using Sublime Text 2 your workflow can be streamlined further b
 ~/Library/Application\ Support/Sublime\ Text\ 2/Packages/User/
 ```
 2. In your Sublime Project Workspace go to **Tools** > **Build System** and select **NamespaceJS**.
+
+**Note:** This build system assumes that your .sublime-project file is a directory above your compiler directory.
 
 
 ### Usage

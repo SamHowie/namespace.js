@@ -1,9 +1,7 @@
-var sys = require('sys')
-var exec = require('child_process').exec;
-function puts(error, stdout, stderr) { sys.puts(stdout) }
-
 (function compile () {
     var fs                  = require('fs'),
+        sys                 = require('sys'),
+        exec                = require('child_process').exec,
         uglify              = require("./uglify-js"),
         CONFIG_URI          = process.argv[2] || "config.json",
         Builder;
@@ -15,6 +13,11 @@ function puts(error, stdout, stderr) { sys.puts(stdout) }
         sourcePath:         null,
         compiledScript:     null,
 
+        /**
+         * Starts the build process.
+         * 
+         * @return {void}
+         */
         start: function start() {
             var context     = this,
                 configData,
@@ -25,7 +28,7 @@ function puts(error, stdout, stderr) { sys.puts(stdout) }
 
             configData = this.configData;
             if (configData == null) {
-                throw "Build Failed: No configuration data defined.";
+                throw "Build failed: No config data found. Please confirm there is a config.json file in the compilers root directory.";
             }
 
             settings = configData.settings;
@@ -38,11 +41,12 @@ function puts(error, stdout, stderr) { sys.puts(stdout) }
             paths = configData.paths;
 
             if (paths == null || paths.coffeescript_source == null || paths.coffeescript_output == null) {
-                throw "Build failed: CoffeesScript compile requested but either coffeescript_source or coffeescript_output has not been set in config.json."
+                console.log("Build warning: CoffeesScript compile requested but either coffeescript_source or coffeescript_output has not been set in config.json. Coffeescript was not transpiled.");
+                this.build();
+                return;
             }
 
-            exec("coffee --compile --output " + paths.coffeescript_output + " " + paths.coffeescript_source, puts);
-            function puts(error, stdout, stderr) {
+            var onCoffeScriptCompiled = function onCoffeScriptCompiled(error, stdout, stderr) {
                 if (error) {
                    sys.puts(error);
                     return; 
@@ -54,6 +58,13 @@ function puts(error, stdout, stderr) { sys.puts(stdout) }
                 if (stdout) sys.puts(stdout);
                 context.build();
             }
+
+            this.compile_coffeescript(paths.coffeescript_source, paths.coffeescript_output, onCoffeScriptCompiled);
+            
+        },
+
+        compile_coffeescript: function compile_coffeescript(source, output, handler) {
+            exec("coffee --compile --output " + output + " " + source, handler);
         },
 
         /**
@@ -358,12 +369,6 @@ function puts(error, stdout, stderr) { sys.puts(stdout) }
             // Add strict mode
             compiledScript = "\"use strict\";\n";
 
-
-            // Add the NamespaceJS module
-            if (namespace_module != null && this.fileExists(namespace_module)) {
-                compiledScript += fs.readFileSync(namespace_module, 'utf8') + "\n";
-            }
-
             // Add hoisted files
             if (hoisted_files != null && this.toType(hoisted_files) === "Array") {
                 for (i = 0, length = hoisted_files.length; i < length; i++) {
@@ -371,6 +376,11 @@ function puts(error, stdout, stderr) { sys.puts(stdout) }
                         compiledScript += fs.readFileSync(hoisted_files[i], 'utf8') + "\n";
                     }
                 }
+            }
+
+            // Add the NamespaceJS module
+            if (namespace_module != null && this.fileExists(namespace_module)) {
+                compiledScript += fs.readFileSync(namespace_module, 'utf8') + "\n";
             }
 
             // Add scripts

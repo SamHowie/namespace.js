@@ -1,7 +1,3 @@
-"use strict";
-(function () {
-	console.log("I am an example library that was hoisted to the top of compiled script.")
-}());  
 (function() {
   var Namespace, root;
 
@@ -127,48 +123,3 @@
   root.Namespace = new Namespace;
 
 }).call(this);
-
-Namespace.define({
-    namespace: "Farmyard.Cow",
-    module: function () {
-        var Cow = function Cow() {};
-        Cow.prototype.speak = function speak() {
-            console.log("Moo!");
-        };
-        return Cow;
-    }
-});
-Namespace.define({
-    namespace: "Farmyard.Pig",
-    module: function () {
-        var Pig = function Pig() {};
-        Pig.prototype.speak = function speak() {
-            console.log("Oink!");
-        };
-        return Pig;
-    }
-});
-Namespace.define({
-    using: ["Farmyard.Cow", "Farmyard.Pig"],
-    namespace: "Farmyard.Farm",
-    module: function (Cow, Pig) {
-        var Farm = function Farm() {
-            this.animals = [];
-            this.animals.push(new Cow());
-            this.animals.push(new Pig());
-        };
-
-        Farm.prototype.stir = function stir() {
-            var animals = this.animals,
-                animal,
-                i,
-                length;
-            for (i = 0, length = animals.length; i < length; i++) {
-                animal = animals[i];
-                animal.speak();
-            };
-        };
-
-        return Farm;
-    }
-});
