@@ -40,13 +40,27 @@
 
             paths = configData.paths;
 
-            if (paths == null || paths.coffeescript_source == null || paths.coffeescript_output == null) {
+            if (paths == null || paths.coffeescript_paths == null) {
                 console.log("Build warning: CoffeesScript compile requested but either coffeescript_source or coffeescript_output has not been set in config.json. Coffeescript was not transpiled.");
                 this.build();
                 return;
             }
 
-            var onCoffeScriptCompiled = function onCoffeScriptCompiled(error, stdout, stderr) {
+            this.compile_coffeescript(paths.coffeescript_paths);
+            
+        },
+
+        compile_coffeescript: function compile_coffeescript(coffeescript_paths) {
+            var i           = 0,
+                length      = coffeescript_paths.length || 0,
+                context     = this,
+                output,
+                source,
+                doCompile;
+
+            doCompile = function onCompiled (error, stdout, stderr) {
+                var compileRequest;
+                // Handle logging
                 if (error) {
                    sys.puts(error);
                     return; 
@@ -55,16 +69,20 @@
                     sys.puts(stderr);
                     return;
                 } 
+
                 if (stdout) sys.puts(stdout);
-                context.build();
+                
+                // Compile next load of CoffeeScript
+                if (i < length) {
+                    compileRequest = coffeescript_paths[i];
+                    i++;
+                    exec("coffee --compile --output " + compileRequest.output + " " + compileRequest.source, doCompile);
+                } else {
+                     context.build();
+                }
             }
 
-            this.compile_coffeescript(paths.coffeescript_source, paths.coffeescript_output, onCoffeScriptCompiled);
-            
-        },
-
-        compile_coffeescript: function compile_coffeescript(source, output, handler) {
-            exec("coffee --compile --output " + output + " " + source, handler);
+            doCompile();
         },
 
         /**

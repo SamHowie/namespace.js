@@ -48,13 +48,17 @@ An array of paths to files that are to be ignored. Ignored files will not be com
 ]
 ```
 
-### coffeescript_source
+### coffeescript_paths
 
-The path to a CoffeeScript source directory to be compiled.
+An array of objects that point to CoffeeScript source files and output directories for transpiled Javascript.
 
-### coffeescript_output
-
-The path to output Javascript files compiled from CoffeeScript.
+```javascript
+// Example of adding multiple coffeescript resource folders to be transpiled.
+"coffeescript_paths": [
+	{"source": "../src/coffeescript/", "output": "../src/"},
+	{"source": "../src/other_coffeescript/", "output": "../other_src/"}
+]
+```
 
 
 ## Settings

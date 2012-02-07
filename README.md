@@ -120,20 +120,21 @@ Namespace.define({
 #### **file:** myproject/compiler/config.json
 ```javascript
 {
-	"paths":{
-		"source": "../src/example/src",
-		"namespace_module": "../src/Namespace.js",
-		"output": "../builds/Farmyard.js",
-		"hoisted_files": ["../src/example/lib/ExampleLibrary.js"],
-		"ignored_files": ["../src/example/src/IgnoredFile.js"],
-		"coffeescript_source": "../src/coffeescript/",
-		"coffeescript_output": "../src/"
-	},
-	"settings":{
-		"ignoreHiddenFiles": true,
-		"uglify": false,
-		"compile_coffeescript": true
-	}
+    "paths":{
+        "source": "../src/example/src",
+        "namespace_module": "../src/Namespace.js",
+        "output": "../builds/Farmyard.js",
+        "hoisted_files": ["../src/example/lib/ExampleLibrary.js"],
+        "ignored_files": ["../src/example/src/IgnoredFile.js"],
+        "coffeescript_paths": [
+            {"source": "../src/coffeescript/", "output": "../src/"}
+        ]
+    },
+    "settings":{
+        "ignoreHiddenFiles": true,
+        "uglify": false,
+        "compile_coffeescript": true
+    }
 }
 ```
 **Note:** Please refer to the compiler folder [README](https://github.com/SamHowie/Namespace.js/blob/master/compiler/README.md) for a breakdown of the configuration options.
