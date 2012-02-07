@@ -56,7 +56,7 @@ In order to be compiled properly, Javascript files must be saved in your source 
 
 ##### For example: 
 
-The script for the module named **MyModule** at namespace **Foo.Bar** is found at **src/Foo/Bar/MyModule.js**.
+The script for the module at namespace **Foo.Bar.MyModule** is found at **[source directory]/Foo/Bar/MyModule.js**.
 
 #### **file:** myproject/src/Farmyard/Cow.js
 ```javascript
