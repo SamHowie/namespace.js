@@ -2,7 +2,7 @@
     var fs                  = require('fs'),
         sys                 = require('sys'),
         exec                = require('child_process').exec,
-        uglify              = require("./uglify-js"),
+        uglify              = require("./lib/uglify-js"),
         CONFIG_URI          = process.argv[2] || "config.json",
         Builder;
 

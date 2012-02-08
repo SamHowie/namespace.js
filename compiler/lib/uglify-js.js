@@ -11,7 +11,7 @@ function uglify(orig_code, options){
   return final_code;
 };
 
-uglify.parser = require("./lib/parse-js");
-uglify.uglify = require("./lib/process");
+uglify.parser = require("./parse-js");
+uglify.uglify = require("./process");
 
 module.exports = uglify;
