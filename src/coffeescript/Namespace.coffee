@@ -1,43 +1,53 @@
-root = exports ? this;
+root = exports ? this
+
+if root.console is undefined then root.console = {}
+if root.console.error is undefined then root.console.error = ->
 
 class Namespace
   constructor: ->
 
   # Public Methods
   define: (module) ->
+    # Validate module parameter
     if module is undefined
-      if !!console and !!console.error
-        console.error "Namespace.define(module): Expected module parameter to be defined. Module failed to be added to namespace."
+      console.error "Namespace.define(module): Expected module parameter to be defined. Module failed to be added to namespace."
       return @
     
-    dependencies  = module.using
-    namespace     = module.namespace
-    definition    = module.module
-
-    if namespace is undefined
-      if !!console and !!console.error
-        console.error "Namespace.define(module): Expected module to have property 'namespace'. Module failed to be added to namespace."
+    # Validate namespace
+    namespace = module.namespace
+    if (@toType namespace) isnt "String"
+      console.error "Namespace.define(module): Expected module.namespace to be of type String. Module failed to be added to namespace."
       return @;
 
+    # Validate definition
+    definition = module.module
+    if (@toType definition) isnt "Function"
+      console.error "Namespace.define(module): Expected module '#{namespace}'s definition to be a function. Module failed to be added to namespace."
+      return @;
+
+    if (definition() is undefined)
+      console.error "Namespace.define(module): Expected module '#{namespace}'s definition to return an object. Module failed to be added to namespace."
+      return @;
+
+    # Validate dependencies
+    dependencies = module.using
     if dependencies is undefined
       dependencies = []
     else
       dependencies = @_getDependencies dependencies
+      if dependencies is undefined
+        return @
 
-    if (@toType definition) isnt "Function"
-      if !!console and !!console.error
-        console.error "Namespace.define(module): Expected module '#{namespace}'s definition to be a function.Module failed to be added to namespace."
-      return @;
-
+    # Insert module at namespace
     @insert namespace, definition.apply root, dependencies
 
     return @
 
   insert: (namespace, module) ->
     # Validate namespace parameter
-    if (@toType namespace) isnt "String"
-      if !!console and !!console.error
-          console.error "Namespace.insert(namespace, module): Expecting 'namespace' parameter to be of type String. Instead saw type #{@toType namespace}. Module failed to be inserted."
+    typeOfNamespace = @toType namespace
+    if (typeOfNamespace) isnt "String"
+      console.error "Namespace.insert(namespace, module): Expecting 'namespace' parameter to be of type String. Instead saw type #{typeOfNamespace}. Module failed to be inserted."
       return @
 
     # Init properties
@@ -54,15 +64,13 @@ class Namespace
 
       # Check for namespace conflict
       if context isnt root and context.isNamespaceNode is undefined
-        if !!console and !!console.error
-          console.error "Namespace.insert(namespace, module): Attempting to insert module with path '#{namespace}' through module with name '#{name}'. Module failed to be inserted."
+        console.error "Namespace.insert(namespace, module): Attempting to insert module with path '#{namespace}' through module with name '#{name}'. Module failed to be inserted."
         return @
 
     # Check for namespace conflict
     if context[moduleName] != undefined
-      if !!console and !!console.error
-          console.error "Namespace.insert(namespace, module): Attempting to insert module with path '#{namespace}' where a module already exists. Module failed to be inserted."
-        return @
+      console.error "Namespace.insert(namespace, module): Attempting to insert module with path '#{namespace}' where a module already exists. Module failed to be inserted."
+      return @
 
     # Insert module at specified location
     context[moduleName] = module;
@@ -71,9 +79,9 @@ class Namespace
 
   get: (namespace) ->
     # Validate namespace parameter
-    if (@toType namespace) isnt "String"
-      if !!console and !!console.error
-          console.error "Namespace.get(namespace): Expecting 'namespace' parameter to be of type String. Instead saw type #{@toType namespace}. Module failed to be retrieved."
+    typeOfNamespace = @toType namespace
+    if (typeOfNamespace) isnt "String"
+      console.error "Namespace.get(namespace): Expecting 'namespace' parameter to be of type String. Instead saw type #{typeOfNamespace}. Module failed to be retrieved."
       return undefined
 
     context = root;
@@ -81,8 +89,7 @@ class Namespace
 
     for name in names
       if context[name] is undefined
-        if !!console and !!console.error
-          console.error "Namespace.get(namespace): The module with namespace '#{namespace}' isnt defined. Module failed to be retrieved."
+        console.error "Namespace.get(namespace): The module with namespace '#{namespace}' isnt defined. Module failed to be retrieved."
         return undefined
       context = context[name]
 
@@ -90,12 +97,17 @@ class Namespace
 
   # Private Methods
   _getDependencies: (dependencies) ->
-    if (@toType dependencies) isnt "Array"
-      if !!console and !!console.error
-        console.error "Namespace.define(module): Expected module to have property 'namespace'. Module failed to be added to namespace."
-      return
+    typeOfDependencies = @toType dependencies
+    if (typeOfDependencies) isnt "Array"
+      console.error "Namespace.define(module): Expected module.using to be of type Array, instead saw #{typeOfDependencies}. Module failed to be added to namespace."
+      return undefined
+    result = [];
+
+    for namespace in dependencies
+      dependency = @get namespace
+      if dependency is undefined then return else result.push dependency
     
-    @get dependency for dependency in dependencies
+    return result
 
   # Util Methods
   toType: (object) ->
