@@ -25,7 +25,7 @@ class Namespace
       console.error "Namespace.define(module): Expected module '#{namespace}'s definition to be a function. Module failed to be added to namespace."
       return @;
 
-    if (definition() is undefined)
+    if definition() is undefined
       console.error "Namespace.define(module): Expected module '#{namespace}'s definition to return an object. Module failed to be added to namespace."
       return @;
 
@@ -46,7 +46,7 @@ class Namespace
   insert: (namespace, module) ->
     # Validate namespace parameter
     typeOfNamespace = @toType namespace
-    if (typeOfNamespace) isnt "String"
+    if typeOfNamespace isnt "String"
       console.error "Namespace.insert(namespace, module): Expecting 'namespace' parameter to be of type String. Instead saw type #{typeOfNamespace}. Module failed to be inserted."
       return @
 
@@ -80,7 +80,7 @@ class Namespace
   get: (namespace) ->
     # Validate namespace parameter
     typeOfNamespace = @toType namespace
-    if (typeOfNamespace) isnt "String"
+    if typeOfNamespace isnt "String"
       console.error "Namespace.get(namespace): Expecting 'namespace' parameter to be of type String. Instead saw type #{typeOfNamespace}. Module failed to be retrieved."
       return undefined
 
@@ -98,7 +98,7 @@ class Namespace
   # Private Methods
   _getDependencies: (dependencies) ->
     typeOfDependencies = @toType dependencies
-    if (typeOfDependencies) isnt "Array"
+    if typeOfDependencies isnt "Array"
       console.error "Namespace.define(module): Expected module.using to be of type Array, instead saw #{typeOfDependencies}. Module failed to be added to namespace."
       return undefined
     result = [];
